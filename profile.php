@@ -1,12 +1,11 @@
 <?php
 session_start();
-require "config/connect.php";
+require 'config/connect.php';
+require 'nav.php';
 
-
-
-if (!isset($_SESSION["id_user"])) {
-    header("Location: index.php");
-    exit;
+if (!isset($_SESSION['id_user'])) {
+    header('Location: index.php');
+    exit();
 }
 
 $sql = $db->prepare("
@@ -22,40 +21,41 @@ $sql = $db->prepare("
 ");
 
 $sql->execute([
-    ':id_user' => $_SESSION['id_user']
+    ':id_user' => $_SESSION['id_user'],
 ]);
 
 $results = $sql->fetchAll();
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil</title>
-    <link rel="stylesheet" href="CSS/style.css">
-</head>
-<body>
-   
-    <main>
-         <?php require "nav.php"; ?>
-        <h1><?= "Bonjour " . htmlspecialchars($_SESSION['firstname']) ?></h1>
-        <h1>Des solutions indispensables pour organiser un événement </h1><br> <br>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Profil</title>
+        <link rel="stylesheet" href="CSS/style.css" />
+    </head>
+    <body>
+        <main>
+            <h1><?= 'Bonjour ' . htmlspecialchars($_SESSION['firstname']) ?></h1>
+            <h1>Des solutions indispensables pour organiser un événement</h1>
+            <br />
+            <br />
 
-        <a href="events.php">Voir toutes les événements disponible</a>
+            <a href="events.php">Voir toutes les événements disponible</a>
 
-        <h2>Les listes d'événements auquels vous vous etes inscrits</h2>
+            <h2>Les listes d'événements auquels vous vous etes inscrits</h2>
 
-        <?php foreach ($results as $row): ?>
+            <?php foreach ($results as $row): ?>
             <article>
-                <h2><?=  htmlspecialchars($row['title_event']) ?></h2>
-                <h3> <?= htmlspecialchars($row['description_event']) ?></h3>
-                <p> <?= $row['date_event'] ? date('d/m/Y', strtotime($row['date_event'])) : '' ?> </p>
-                <p> <?= "Lieu:" . htmlspecialchars($row['place_event']) ?></p>
+                <h2><?= htmlspecialchars($row['title_event']) ?></h2>
+                <h3><?= htmlspecialchars($row['description_event']) ?></h3>
+                <p><?= $row['date_event']
+                    ? date('d/m/Y', strtotime($row['date_event']))
+                    : '' ?></p>
+                <p><?= 'Lieu:' . htmlspecialchars($row['place_event']) ?></p>
                 <a href="delete.php?id_event=<?= $row['id_event'] ?>">Annuler ma réservation</a>
             </article>
-        <?php endforeach; ?>
-    </main>    
-</body>
+            <?php endforeach; ?>
+        </main>
+    </body>
 </html>

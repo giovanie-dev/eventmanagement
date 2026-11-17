@@ -1,23 +1,22 @@
 <?php
 session_start();
-require "config/connect.php";
+require 'config/connect.php';
 
-
-if (!isset($_SESSION["id_user"])) {
-    header("Location: index.php");
+if (!isset($_SESSION['id_user'])) {
+    header('Location: index.php');
     exit();
 }
 
 if (($_SESSION['role'] ?? null) != 2) {
-    header("Location: index.php");
-    exit;
+    header('Location: index.php');
+    exit();
 }
 
 $id_event = $_GET['id_event'] ?? null;
 
 if (!$id_event) {
-    header("Location: createevent.php");
-    exit;
+    header('Location: createevent.php');
+    exit();
 }
 
 $sql = $db->prepare("SELECT DISTINCT firstname_user, lastname_user, email_user, title_event 
@@ -28,7 +27,7 @@ $sql = $db->prepare("SELECT DISTINCT firstname_user, lastname_user, email_user, 
 
 $sql->execute([
     ':id_user' => $_SESSION['id_user'],
-    ':id_event' => $id_event
+    ':id_event' => $id_event,
 ]);
 
 $results = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -36,31 +35,27 @@ $results = $sql->fetchAll(PDO::FETCH_ASSOC);
 
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Inscription événement</title>
-    <link rel="stylesheet" href="CSS/style.css">
-</head>
-<body>
-    <main>
-        <?php require "nav.php"; ?>
-        <h1>Liste des inscrits</h1>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Inscription événement</title>
+        <link rel="stylesheet" href="CSS/style.css" />
+    </head>
+    <body>
+        <main>
+            <?php require 'nav.php'; ?>
+            <h1>Liste des inscrits</h1>
 
-        <?php if (empty($results)): ?>
+            <?php if (empty($results)): ?>
             <p>Aucun inscrit pour le moment.</p>
-        <?php else: ?>
+            <?php else: ?>
             <ul>
-            <?php foreach ($results as $r): ?>
-                <li>
-                    <?= htmlspecialchars($r['firstname_user']) ?>
-                    <?= htmlspecialchars($r['lastname_user']) ?>
-                    (<?= htmlspecialchars($r['email_user']) ?>)
-                </li>
-            <?php endforeach; ?>
+                <?php foreach ($results as $r): ?>
+                <li><?= htmlspecialchars($r['firstname_user']) ?> <?= htmlspecialchars($r['lastname_user']) ?> (<?= htmlspecialchars($r['email_user']) ?>)</li>
+                <?php endforeach; ?>
             </ul>
-        <?php endif; ?>
+            <?php endif; ?>
 
-        <a href="createevent.php">Retour</a>
-    </main>
-</body>
+            <a href="createevent.php">Retour</a>
+        </main>
+    </body>
 </html>
