@@ -1,24 +1,19 @@
 <?php
 
-// CREATE
-// manipulation de données en BDD avec PDO
+// Connexion à la base de données hébergée sur InfinityFree.
+$host = 'sql301.infinityfree.com';
+$database = 'if0_43462867_Events_Site1';
+$username = 'if0_43462867';
+$password = 'R61uFycKJlUvYw';
 
-// avant de pouvoir manipuler une BDD, il faut s'y connecter idéalement, la connexion se fait dans un try, catch statement
 try {
-    // connexion fait appel à une INSTANCE à la calsse PDO
     $db = new PDO(
-        'mysql:host=localhost; dbname=events;charset=utf8',
-        'root', //utilisateur
-        '', //route a pas de mdp
-
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // active gestion d'erreur
-        ],
+        "mysql:host={$host};dbname={$database};charset=utf8mb4",
+        $username,
+        $password,
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
-} catch (Exception $e) {
-    //echo "Connexion refusée à la base de donnée";
-
-    // on peut écrire la vrai erreur dans un log(a faire avant exit)
-    echo "Error: .$e -> getMessage()";
-    exit();
+} catch (PDOException $e) {
+    http_response_code(500);
+    exit('La connexion à la base de données est momentanément indisponible.');
 }
